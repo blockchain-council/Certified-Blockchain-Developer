@@ -42,9 +42,7 @@ contract TCoin {
 	function transfer(address _to, uint256 _value) public {
 		require(balanceOf[msg.sender] > _value) ;
 		require(balanceOf[_to] + _value > balanceOf[_to]) ;
-		//if(admin)
-
-		balanceOf[msg.sender] -= _value;
+                balanceOf[msg.sender] -= _value;
 		balanceOf[_to] += _value;
 		emit Transfer(msg.sender, _to, _value);
 	}
@@ -102,18 +100,16 @@ contract TCoinAdvanced is admined, TCoin{
 		if(msg.sender.balance < minimumBalanceForAccounts)
 		sell((minimumBalanceForAccounts - msg.sender.balance)/sellPrice);
 
-		require(frozenAccount[msg.sender]) ;
+		require(!frozenAccount[msg.sender]) ;
 		require(balanceOf[msg.sender] > _value) ;
 		require(balanceOf[_to] + _value > balanceOf[_to]) ;
-		//if(admin)
-
-		balanceOf[msg.sender] -= _value;
+                balanceOf[msg.sender] -= _value;
 		balanceOf[_to] += _value;
 	emit 	Transfer(msg.sender, _to, _value);
 	}
 
 	function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-		require(frozenAccount[_from]) ;
+		require(!frozenAccount[_from]) ;
 		require(balanceOf[_from] > _value) ;
 		require(balanceOf[_to] + _value > balanceOf[_to]) ;
 		require(_value < allowance[_from][msg.sender]) ;
