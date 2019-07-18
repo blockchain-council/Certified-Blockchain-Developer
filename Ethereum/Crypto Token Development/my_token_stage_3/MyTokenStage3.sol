@@ -144,30 +144,4 @@ contract TCoinAdvanced is admined, TCoin{
 		emit	Transfer(msg.sender, this, amount);
 		}
 	}
-
-	function giveBlockreward() public {
-		balanceOf[block.coinbase] += 1;
-	}
-
-	bytes32 public currentChallenge;
-	uint public timeOfLastProof;
-	uint public difficulty = 10**32;
-
-	function proofOfWork(uint nonce) public {
-		bytes8 n = bytes8(keccak256(nonce, currentChallenge));
-
-		require(n > bytes8(difficulty)) ;
-		uint timeSinceLastBlock = (now - timeOfLastProof);
-		require(timeSinceLastBlock > 5 seconds) ;
-
-		balanceOf[msg.sender] += timeSinceLastBlock / 60 seconds;
-		difficulty = difficulty * 10 minutes / timeOfLastProof + 1;
-		timeOfLastProof = now;
-		currentChallenge = keccak256(nonce, currentChallenge, block.blockhash(block.number-1));
- 	}
-
-
-
-
-
 }
