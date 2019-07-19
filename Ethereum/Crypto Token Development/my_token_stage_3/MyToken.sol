@@ -14,6 +14,10 @@ contract Administrable {
         return _admin;
     }
 
+    function setAdmin(address initialAdmin) internal {
+        _admin = initialAdmin;
+    }
+
 	modifier onlyAdmin() {
 		require(msg.sender == _admin, "Only Admin can perform this action.");
 		_;
@@ -61,12 +65,24 @@ contract MyToken {
         return _totalSupply;
     }
 
+    function setTotalSupply(uint256 totalAmount) internal {
+        _totalSupply = totalAmount;
+    }
+
     function balanceOf(address account) public view returns (uint256) {
         return _balances[account];
     }
 
+    function setBalance(address account, uint256 balance) internal {
+        _balances[account] = balance;
+    }
+
     function allowance(address owner, address spender) public view returns (uint256) {
         return _allowances[owner][spender];
+    }
+
+    function setAllowance(address owner, address spender, uint256 amount) internal {
+        _allowances[owner][spender] = amount;
     }
 
     function transfer(address beneficiary, uint256 amount) public returns (bool) {

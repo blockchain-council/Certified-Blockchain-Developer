@@ -11,6 +11,10 @@ contract MyToken {
         return _balances[account];
     }
 
+    function setBalance(address account, uint256 balance) internal {
+        _balances[account] = balance;
+    }
+
     function transfer(address beneficiary, uint256 amount) public returns (bool) {
         _balances[msg.sender] -= amount;
         _balances[beneficiary] += amount;
