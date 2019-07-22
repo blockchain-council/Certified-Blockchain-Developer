@@ -119,6 +119,10 @@ contract MyToken {
 
 
 contract MyTokenAdvanced is MyToken, Administrable {
+    mapping (address => bool) private _frozenAccounts;
+
+    event FrozenFund(address indexed target, bool frozen);
+
     constructor(uint256 initialSupply, string memory tokenName, string memory tokenSymbol, uint8 decimalUnits, address admin) public
         MyToken(0, tokenName, tokenSymbol, decimalUnits) {
             if(admin != address(0))
@@ -137,5 +141,10 @@ contract MyTokenAdvanced is MyToken, Administrable {
         setBalance(target, balanceOf(target) + mintedAmount);
         setTotalSupply(totalSupply() + mintedAmount);
         emit Transfer(address(0), target, mintedAmount);
+    }
+
+    function freezeAccount(address target, bool freeze) public onlyAdmin {
+        _frozenAccounts[target] = freeze;
+        emit FrozenFund(target, freeze);
     }
 }
