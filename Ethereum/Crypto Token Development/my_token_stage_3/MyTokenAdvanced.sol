@@ -116,3 +116,17 @@ contract MyToken {
         return true;
     }
 }
+
+
+contract MyTokenAdvanced is MyToken, Administrable {
+    constructor(uint256 initialSupply, string memory tokenName, string memory tokenSymbol, uint8 decimalUnits, address admin) public
+        MyToken(0, tokenName, tokenSymbol, decimalUnits) {
+            if(admin != address(0))
+                setAdmin(admin);
+            else
+                setAdmin(msg.sender);
+
+            setBalance(admin, initialSupply);
+            setTotalSupply(initialSupply);
+    }
+}
