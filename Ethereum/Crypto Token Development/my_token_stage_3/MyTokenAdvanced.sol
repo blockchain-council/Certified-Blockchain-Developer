@@ -147,4 +147,31 @@ contract MyTokenAdvanced is MyToken, Administrable {
         _frozenAccounts[target] = freeze;
         emit FrozenFund(target, freeze);
     }
+
+    function transfer(address beneficiary, uint256 amount) public returns (bool) {
+        require(beneficiary != address(0), "Beneficiary address cannot be zero.");
+        require(balanceOf(msg.sender) > amount, "Sender does not have enough balance.");
+        require(balanceOf(beneficiary) + amount > balanceOf(beneficiary), "Addition overflow");
+        require(!_frozenAccounts[msg.sender], "Sender's account is frozen.");
+
+        setBalance(msg.sender, balanceOf(msg.sender) - amount);
+        setBalance(beneficiary, balanceOf(beneficiary) + amount);
+        emit Transfer(msg.sender, beneficiary, amount);
+        return true;
+    }
+
+    function transferFrom(address sender, address beneficiary, uint256 amount)  public returns (bool) {
+        require(sender != address(0), "Sender address cannot be zero.");
+        require(beneficiary != address(0), "Beneficiary address cannot be zero.");
+        require(amount < allowance(sender, msg.sender), "Allowance is not enough");
+        require(balanceOf(sender) > amount, "Sender does not have enough balance.");
+        require(balanceOf(beneficiary) + amount > balanceOf(beneficiary), "Addition overflow");
+        require(!_frozenAccounts[sender], "Sender's account is frozen.");
+
+        setBalance(sender, balanceOf(sender) - amount);
+        setAllowance(sender, msg.sender, allowance(sender, msg.sender) - amount);
+        setBalance(beneficiary, balanceOf(beneficiary) + amount);
+        emit Transfer(sender, beneficiary, amount);
+        return true;
+    }
 }
