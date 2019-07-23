@@ -120,6 +120,10 @@ contract MyToken {
 
 contract MyTokenAdvanced is MyToken, Administrable {
     mapping (address => bool) private _frozenAccounts;
+    mapping (address => uint) private _pendingWithdrawals;
+
+    uint256 private _sellPrice; // ether per token
+    uint256 private _buyPrice;  // ether per token
 
     event FrozenFund(address indexed target, bool frozen);
 
@@ -173,5 +177,41 @@ contract MyTokenAdvanced is MyToken, Administrable {
         setBalance(beneficiary, balanceOf(beneficiary) + amount);
         emit Transfer(sender, beneficiary, amount);
         return true;
+    }
+
+        function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public onlyAdmin {
+        _sellPrice = newSellPrice;
+        _buyPrice = newBuyPrice;
+    }
+
+    function buy() public payable {
+        uint256 amount = (msg.value/(1 ether)) / _buyPrice;
+        address thisContractAddress = address(this);
+
+        require(balanceOf(thisContractAddress) > amount, "Contract does not have enough tokens.");
+        require(balanceOf(msg.sender) + amount > balanceOf(msg.sender), "Addition overflow");
+
+        setBalance(thisContractAddress, balanceOf(thisContractAddress) - amount);
+        setBalance(msg.sender, balanceOf(msg.sender) + amount);
+        emit Transfer(thisContractAddress, msg.sender, amount);
+    }
+
+    function sell(uint256 amount) public {
+        address thisContractAddress = address(this);
+
+        require(balanceOf(msg.sender) > amount, "Seller does not have enough tokens.");
+        require(balanceOf(thisContractAddress) + amount > balanceOf(thisContractAddress), "Addition overflow");
+
+        setBalance(msg.sender, balanceOf(msg.sender) - amount);
+        setBalance(thisContractAddress, balanceOf(thisContractAddress) + amount);
+        uint256 saleProceed = amount * _sellPrice * (1 ether);
+        _pendingWithdrawals[msg.sender] += saleProceed;
+        emit Transfer(msg.sender, thisContractAddress, amount);
+    }
+
+    function withdraw() public {
+        uint amount = _pendingWithdrawals[msg.sender];
+        _pendingWithdrawals[msg.sender] = 0;
+        msg.sender.transfer(amount);
     }
 }
