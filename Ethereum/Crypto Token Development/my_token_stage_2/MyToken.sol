@@ -10,6 +10,7 @@ contract MyToken {
     uint256 private _totalSupply;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     constructor(uint256 initialSupply, string memory tokenName, string memory tokenSymbol, uint8 decimalUnits) public {
         _balances[msg.sender] = initialSupply;
@@ -69,6 +70,7 @@ contract MyToken {
     function approve(address spender, uint256 amount) public returns (bool success) {
         require(spender != address(0), "Spender address cannot be zero.");
         _allowances[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
         return true;
     }
 
