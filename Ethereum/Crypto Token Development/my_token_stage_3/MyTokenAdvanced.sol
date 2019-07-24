@@ -87,7 +87,7 @@ contract MyToken {
 
     function transfer(address beneficiary, uint256 amount) public returns (bool) {
         require(beneficiary != address(0), "Beneficiary address cannot be zero.");
-        require(_balances[msg.sender] > amount, "Sender does not have enough balance.");
+        require(_balances[msg.sender] >= amount, "Sender does not have enough balance.");
         require(_balances[beneficiary] + amount > _balances[beneficiary], "Addition overflow");
 
         _balances[msg.sender] -= amount;
@@ -105,8 +105,8 @@ contract MyToken {
     function transferFrom(address sender, address beneficiary, uint256 amount)  public returns (bool) {
         require(sender != address(0), "Sender address cannot be zero.");
         require(beneficiary != address(0), "Beneficiary address cannot be zero.");
-        require(amount < _allowances[sender][msg.sender], "Allowance is not enough");
-        require(_balances[sender] > amount, "Sender does not have enough balance.");
+        require(amount <= _allowances[sender][msg.sender], "Allowance is not enough");
+        require(_balances[sender] >= amount, "Sender does not have enough balance.");
         require(_balances[beneficiary] + amount > _balances[beneficiary], "Addition overflow");
 
         _balances[sender] -= amount;
@@ -154,7 +154,7 @@ contract MyTokenAdvanced is MyToken, Administrable {
 
     function transfer(address beneficiary, uint256 amount) public returns (bool) {
         require(beneficiary != address(0), "Beneficiary address cannot be zero.");
-        require(balanceOf(msg.sender) > amount, "Sender does not have enough balance.");
+        require(balanceOf(msg.sender) >= amount, "Sender does not have enough balance.");
         require(balanceOf(beneficiary) + amount > balanceOf(beneficiary), "Addition overflow");
         require(!_frozenAccounts[msg.sender], "Sender's account is frozen.");
 
@@ -167,8 +167,8 @@ contract MyTokenAdvanced is MyToken, Administrable {
     function transferFrom(address sender, address beneficiary, uint256 amount)  public returns (bool) {
         require(sender != address(0), "Sender address cannot be zero.");
         require(beneficiary != address(0), "Beneficiary address cannot be zero.");
-        require(amount < allowance(sender, msg.sender), "Allowance is not enough");
-        require(balanceOf(sender) > amount, "Sender does not have enough balance.");
+        require(amount <= allowance(sender, msg.sender), "Allowance is not enough");
+        require(balanceOf(sender) >= amount, "Sender does not have enough balance.");
         require(balanceOf(beneficiary) + amount > balanceOf(beneficiary), "Addition overflow");
         require(!_frozenAccounts[sender], "Sender's account is frozen.");
 
@@ -188,7 +188,7 @@ contract MyTokenAdvanced is MyToken, Administrable {
         uint256 amount = (msg.value/(1 ether)) / _buyPrice;
         address thisContractAddress = address(this);
 
-        require(balanceOf(thisContractAddress) > amount, "Contract does not have enough tokens.");
+        require(balanceOf(thisContractAddress) >= amount, "Contract does not have enough tokens.");
         require(balanceOf(msg.sender) + amount > balanceOf(msg.sender), "Addition overflow");
 
         setBalance(thisContractAddress, balanceOf(thisContractAddress) - amount);
@@ -199,7 +199,7 @@ contract MyTokenAdvanced is MyToken, Administrable {
     function sell(uint256 amount) public {
         address thisContractAddress = address(this);
 
-        require(balanceOf(msg.sender) > amount, "Seller does not have enough tokens.");
+        require(balanceOf(msg.sender) >= amount, "Seller does not have enough tokens.");
         require(balanceOf(thisContractAddress) + amount > balanceOf(thisContractAddress), "Addition overflow");
 
         setBalance(msg.sender, balanceOf(msg.sender) - amount);
