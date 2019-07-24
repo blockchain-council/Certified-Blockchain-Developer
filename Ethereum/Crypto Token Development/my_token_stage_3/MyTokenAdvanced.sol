@@ -124,8 +124,8 @@ contract MyTokenAdvanced is MyToken, Administrable {
     mapping (address => bool) private _frozenAccounts;
     mapping (address => uint) private _pendingWithdrawals;
 
-    uint256 private _sellPrice; // ether per token
-    uint256 private _buyPrice;  // ether per token
+    uint256 private _sellPrice = 1; // ether per token
+    uint256 private _buyPrice = 1;  // ether per token
 
     event FrozenFund(address indexed target, bool frozen);
 
@@ -182,8 +182,11 @@ contract MyTokenAdvanced is MyToken, Administrable {
     }
 
         function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public onlyAdmin {
-        _sellPrice = newSellPrice;
-        _buyPrice = newBuyPrice;
+            require(newSellPrice > 0, "Sell price cannot be zero.");
+            require(newBuyPrice > 0, "Buy price cannot be zero.");
+
+            _sellPrice = newSellPrice;
+            _buyPrice = newBuyPrice;
     }
 
     function buy() public payable {
