@@ -3,7 +3,7 @@ pragma solidity ^0.5.10;
 contract Administrable {
 	address private _admin;
 
-    event AdminshipTransferred(address indexed previousAdmin, address indexed newAdmin);
+    event AdminshipTransferred(address indexed currentAdmin, address indexed newAdmin);
 
 	constructor() internal {
 		_admin = msg.sender;
