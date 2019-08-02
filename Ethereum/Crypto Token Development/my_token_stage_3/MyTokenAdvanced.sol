@@ -14,10 +14,6 @@ contract Administrable {
         return _admin;
     }
 
-    function setAdmin(address initialAdmin) internal {
-        _admin = initialAdmin;
-    }
-
 	modifier onlyAdmin() {
 		require(msg.sender == _admin, "Only Admin can perform this action.");
 		_;
