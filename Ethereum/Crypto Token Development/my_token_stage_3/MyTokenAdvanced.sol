@@ -129,14 +129,12 @@ contract MyTokenAdvanced is MyToken, Administrable {
 
     event FrozenFund(address indexed target, bool frozen);
 
-    constructor(uint256 initialSupply, string memory tokenName, string memory tokenSymbol, uint8 decimalUnits, address admin) public
+    constructor(uint256 initialSupply, string memory tokenName, string memory tokenSymbol, uint8 decimalUnits, address newAdmin) public
         MyToken(0, tokenName, tokenSymbol, decimalUnits) {
-            if(admin != address(0))
-                setAdmin(admin);
-            else
-                setAdmin(msg.sender);
+            if(newAdmin != address(0) && newAdmin != msg.sender)
+                transferAdminship(newAdmin);
 
-            setBalance(admin, initialSupply);
+            setBalance(admin(), initialSupply);
             setTotalSupply(initialSupply);
     }
 
