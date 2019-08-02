@@ -140,6 +140,22 @@ contract MyTokenAdvanced is MyToken, Administrable {
             setTotalSupply(initialSupply);
     }
 
+    function sellPrice() public view returns (uint256) {
+        return _sellPrice;
+    }
+
+    function buyPrice() public view returns (uint256) {
+        return _buyPrice;
+    }
+
+    function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public onlyAdmin {
+        require(newSellPrice > 0, "Sell price cannot be zero.");
+        require(newBuyPrice > 0, "Buy price cannot be zero.");
+
+        _sellPrice = newSellPrice;
+        _buyPrice = newBuyPrice;
+    }
+
     function mintToken(address target, uint256 mintedAmount) public onlyAdmin {
         require(balanceOf(target) + mintedAmount > balanceOf(target), "Addition overflow");
         require(totalSupply() + mintedAmount > totalSupply(), "Addition overflow");
@@ -179,14 +195,6 @@ contract MyTokenAdvanced is MyToken, Administrable {
         setBalance(beneficiary, balanceOf(beneficiary) + amount);
         emit Transfer(sender, beneficiary, amount);
         return true;
-    }
-
-        function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public onlyAdmin {
-            require(newSellPrice > 0, "Sell price cannot be zero.");
-            require(newBuyPrice > 0, "Buy price cannot be zero.");
-
-            _sellPrice = newSellPrice;
-            _buyPrice = newBuyPrice;
     }
 
     function buy() public payable {
